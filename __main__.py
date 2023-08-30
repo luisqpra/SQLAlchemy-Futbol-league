@@ -14,4 +14,5 @@ num_match = session.query(Match).count()
 for i in range(1, 6):
     score_A, score_B, bonus_A, bonus_B = play_match(session=session, match=i)
     print(score_A, score_B, bonus_A, bonus_B)
+    # UPDATE SCORE AND BONUS TO FINISH
 session.close()
