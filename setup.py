@@ -30,3 +30,5 @@ insert_teams_with_random_stats(harry_potter_teams, session=session)
 # Crear el calendario Fixture
 list_IDteams = get_team_ids(session)
 matches = create_season(teams=list_IDteams, session=session)
+
+session.close()
