@@ -70,34 +70,87 @@ def goal_scoring(goal_probability: float) -> int:
         return 0
 
 
-def play_match(session: Session, match: int) -> list[int]:
-    A_team_goals = 0
-    B_team_goals = 0
-    
-    A_teamM, B_teamM = session.query(Match).filter_by(num_match=match).all()
+def bonus_score(turns_A: int,
+                turns_B: int,
+                goal_score_A: int,
+                goal_score_B: int,
+                team: Team) -> List[int]:
 
-    A_team = session.query(Team).filter_by(id=A_teamM.id).first()
-    B_team = session.query(Team).filter_by(id=B_teamM.id).first()
+    bonus_forward = 0
+    bonus_midfielder = 0
+    bonus_defence = 0
+
+    if goal_score_A/turns_A > 0.8:
+        bonus_midfielder = 0.2
+        bonus_forward = 0.2
+    elif goal_score_A/turns_A >= 0.7:
+        bonus_midfielder = 0.1
+        bonus_forward = 0.1
+    elif goal_score_A/turns_A < 0.2:
+        bonus_midfielder = -0.2
+        bonus_forward = -0.2
+    elif goal_score_A/turns_A <= 0.3:
+        bonus_midfielder = -0.1
+        bonus_forward = -0.1
+
+    if goal_score_B/turns_B > 0.8:
+        bonus_defence = -0.2
+    elif goal_score_B/turns_B >= 0.7:
+        bonus_defence = -0.1
+    elif goal_score_B/turns_B < 0.2:
+        bonus_defence = 0.2
+    elif goal_score_B/turns_B <= 0.3:
+        bonus_defence = 0.1
+
+    if team.forward + bonus_forward < 1:
+        bonus_forward = 0
+    elif team.forward + bonus_forward > 9:
+        bonus_forward = 9
+    if team.midfielder + bonus_midfielder < 1:
+        bonus_midfielder = 0
+    elif team.midfielder + bonus_midfielder > 9:
+        bonus_midfielder = 9
+    if team.defence + bonus_defence < 1:
+        bonus_midfielder = 0
+    elif team.defence + bonus_defence > 9:
+        bonus_midfielder = 9
+
+    return [bonus_forward, bonus_midfielder, bonus_defence]
+
+
+def play_match(session: Session, match: int) -> list[int]:
+    team_goals_A = 0
+    team_goals_B = 0
+    
+    teamM_A, teamM_B = session.query(Match).filter_by(num_match=match).all()
+
+    team_A = session.query(Team).filter_by(id=teamM_A.id).first()
+    team_B = session.query(Team).filter_by(id=teamM_B.id).first()
 
     # print(A_team.id, A_team.defence, A_team.midfielder, A_team.forward)
     # print(B_team.id, B_team.defence, B_team.midfielder, B_team.forward)
 
     TURNS = 12
 
-    turns_A = round(TURNS*A_team.midfielder/(A_team.midfielder+B_team.midfielder))
+    turns_A = round(TURNS*team_A.midfielder/(team_A.midfielder+team_B.midfielder))
     turns_B = TURNS - turns_A
     turns = max(turns_A, turns_B)
 
-    A_goal_scoring = A_team.forward/(A_team.forward+B_team.defence)
-    B_goal_scoring = B_team.forward/(B_team.forward+A_team.defence)
+    goal_scoring_A = team_A.forward/(team_A.forward+team_B.defence)
+    goal_scoring_B = team_B.forward/(team_B.forward+team_A.defence)
 
     for turn in range(1, turns+1):
         if turn <= turns_A:
-            A_team_goals += goal_scoring(A_goal_scoring)
+            team_goals_A += goal_scoring(goal_scoring_A)
         if turn <= turns_B:
-            B_team_goals += goal_scoring(B_goal_scoring)
+            team_goals_B += goal_scoring(goal_scoring_B)
 
-    return [A_team_goals, B_team_goals]
+    bonus_A = bonus_score(turns_A, turns_B, team_goals_A, team_goals_B, team_A)
+    bonus_B = bonus_score(turns_B, turns_A, team_goals_B, team_goals_A, team_B)
+
+
+
+    return [team_goals_A, team_goals_B, bonus_A, bonus_B]
 
 
 if __name__ == '__main__':
