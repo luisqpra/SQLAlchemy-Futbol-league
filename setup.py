@@ -2,7 +2,7 @@ from config import database_url
 from utils import insert_teams_with_random_stats, get_team_ids, create_season
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-
+from models import Base
 
 # Creamos un motor de base de datos usando la URL y habilitamos la opción
 # de impresión de comandos SQL (echo)
@@ -14,7 +14,6 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 # Crear las tablas en la base de datos
-from models import Base
 Base.metadata.create_all(engine)
 
 # Crear los equipos
@@ -30,6 +29,5 @@ insert_teams_with_random_stats(harry_potter_teams, session=session)
 
 # Crear el calendario Fixture
 list_IDteams = get_team_ids(session)
-matches = create_season(teams=list_IDteams, session=session)
-
+create_season(teams=list_IDteams, session=session)
 session.close()

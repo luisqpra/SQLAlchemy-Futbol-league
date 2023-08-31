@@ -56,6 +56,7 @@ def create_season(teams: list[int], session: Session) -> None:
                            team_id=teams[n - 1 - i])
             session.add(team_B)
             session.commit()
+        teams.insert(1, teams.pop())
 
 
 def goal_scoring(goal_probability: float) -> int:
@@ -127,8 +128,8 @@ def play_match(session: Session, match: int) -> list[int]:
     team_A = session.query(Team).filter_by(id=teamM_A.id).first()
     team_B = session.query(Team).filter_by(id=teamM_B.id).first()
 
-    # print(A_team.id, A_team.defence, A_team.midfielder, A_team.forward)
-    # print(B_team.id, B_team.defence, B_team.midfielder, B_team.forward)
+    print(teamM_A.id, team_A.defence)
+    print(teamM_B.id, team_B.defence)
 
     TURNS = 12
 
