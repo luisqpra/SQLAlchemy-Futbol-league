@@ -61,9 +61,9 @@ def create_season(teams: list[int], session: Session) -> None:
 def goal_scoring(goal_probability: float) -> int:
     if goal_probability < 0 or goal_probability > 1:
         raise ValueError("Probability must be between 0 and 1")
-    
+
     result = random.random()  # Generates a random number between 0 and 1
-    
+
     if result < goal_probability:
         return 1
     else:
@@ -121,7 +121,7 @@ def bonus_score(turns_A: int,
 def play_match(session: Session, match: int) -> list[int]:
     team_goals_A = 0
     team_goals_B = 0
-    
+
     teamM_A, teamM_B = session.query(Match).filter_by(num_match=match).all()
 
     team_A = session.query(Team).filter_by(id=teamM_A.id).first()
@@ -132,7 +132,9 @@ def play_match(session: Session, match: int) -> list[int]:
 
     TURNS = 12
 
-    turns_A = round(TURNS*team_A.midfielder/(team_A.midfielder+team_B.midfielder))
+    turns_A = round(
+        TURNS*team_A.midfielder/(team_A.midfielder+team_B.midfielder)
+        )
     turns_B = TURNS - turns_A
     turns = max(turns_A, turns_B)
 
@@ -147,8 +149,6 @@ def play_match(session: Session, match: int) -> list[int]:
 
     bonus_A = bonus_score(turns_A, turns_B, team_goals_A, team_goals_B, team_A)
     bonus_B = bonus_score(turns_B, turns_A, team_goals_B, team_goals_A, team_B)
-
-
 
     return [team_goals_A, team_goals_B, bonus_A, bonus_B]
 

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, ForeignKey, String
+from sqlalchemy import Column, Integer, ForeignKey, String, Float
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -12,6 +12,9 @@ class Match(Base):
     num_match = Column(Integer)
     day_match = Column(Integer)
     team_id = Column(Integer, ForeignKey('teams.id'))
+    bonus_defence = Column(Float)
+    bonus_midfielder = Column(Float)
+    bonus_forward = Column(Float)
     team = relationship('Team', foreign_keys=[team_id],
                         back_populates='team')
     team_score = Column(Integer)
