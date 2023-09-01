@@ -119,7 +119,7 @@ def bonus_score(turns_A: int,
     return [bonus_forward, bonus_midfielder, bonus_defence]
 
 
-def play_match(session: Session, match: int) -> list[int]:
+def play_match(session: Session, match: int) -> List[int] | List[List[int]]:
     team_goals_A = 0
     team_goals_B = 0
 
@@ -148,7 +148,19 @@ def play_match(session: Session, match: int) -> list[int]:
     bonus_A = bonus_score(turns_A, turns_B, team_goals_A, team_goals_B, team_A)
     bonus_B = bonus_score(turns_B, turns_A, team_goals_B, team_goals_A, team_B)
 
-    return [team_goals_A, team_goals_B, bonus_A, bonus_B]
+    # save score and bonus
+    teamM_A.team_score = team_goals_A
+    teamM_A.bonus_defence = bonus_A[2]
+    teamM_A.bonus_midfielder = bonus_A[1]
+    teamM_A.bonus_forward = bonus_A[0]
+
+    teamM_B.team_score = team_goals_B
+    teamM_B.bonus_defence = bonus_B[2]
+    teamM_B.bonus_midfielder = bonus_B[1]
+    teamM_B.bonus_forward = bonus_B[0]
+    session.commit()
+
+    return [team_goals_A, bonus_A, team_goals_B, bonus_B]
 
 
 if __name__ == '__main__':
