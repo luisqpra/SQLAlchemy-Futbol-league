@@ -125,11 +125,8 @@ def play_match(session: Session, match: int) -> list[int]:
 
     teamM_A, teamM_B = session.query(Match).filter_by(num_match=match).all()
 
-    team_A = session.query(Team).filter_by(id=teamM_A.id).first()
-    team_B = session.query(Team).filter_by(id=teamM_B.id).first()
-
-    print(teamM_A.id, team_A.defence)
-    print(teamM_B.id, team_B.defence)
+    team_A = session.query(Team).filter_by(id=teamM_A.team_id).first()
+    team_B = session.query(Team).filter_by(id=teamM_B.team_id).first()
 
     TURNS = 12
 

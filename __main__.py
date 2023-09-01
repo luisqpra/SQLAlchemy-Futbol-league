@@ -13,9 +13,8 @@ session = Session()
 num_match = session.query(Match).count()
 for i in range(1, 12):
     teamM_A, teamM_B = session.query(Match).filter_by(num_match=i).all()
-    print(teamM_A.team_id, teamM_B.team_id, teamM_A.id, teamM_B.id, teamM_A.num_match, i)
-    # score_A, score_B, bonus_A, bonus_B = play_match(session=session, match=i)
-    # print(score_A, score_B, bonus_A, bonus_B)
+    score_A, score_B, bonus_A, bonus_B = play_match(session=session, match=i)
+    print(score_A, score_B, bonus_A, bonus_B)
     # UPDATE SCORE AND BONUS TO FINISH IN MATCHES
     '''
     match_to_update = session.query(Match).filter_by(id=1).first()
