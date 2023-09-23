@@ -93,6 +93,7 @@ The `Match` model represents a football match and its details. It has the follow
 - `bonus_midfielder`: Bonus value for midfielder.
 - `bonus_forward`: Bonus value for forward.
 - `team_score`: The score of the team in the match.
+- `season`: The season of the match.
 
 ### Team Model
 
@@ -145,8 +146,6 @@ create_season(teams=list_IDteams, session=session)
 ```
 ---
 ## Utility Functions
-
-## Explanation of Utility Functions
 
 Here's an overview of the utility functions included in `utils.py`:
 

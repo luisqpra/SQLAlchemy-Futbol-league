@@ -35,28 +35,35 @@ def get_team_ids(session: Session) -> List[int]:
     return team_ids
 
 
-def create_season(teams: list[int], session: Session) -> None:
+def create_season(teams: list[int], session: Session, seasons: int) -> None:
     """
     The function creates a season by generating all possible matches
     between teams and adding them to the session.
     """
-    if len(teams) % 2:
-        teams.append('Day off')
-    n = len(teams)
-    matchs = []
-    for j in range(1, n):
-        for i in range(int(n/2)):
-            if 'Day off' in (teams[i], teams[n - 1 - i]):
-                continue
-            matchs.append((teams[i], teams[n - 1 - i]))
-            team_A = Match(num_match=int(n/2)*(j-1)+i+1, day_match=j,
-                           team_id=teams[i])
-            session.add(team_A)
-            team_B = Match(num_match=int(n/2)*(j-1)+i+1, day_match=j,
-                           team_id=teams[n - 1 - i])
-            session.add(team_B)
-            session.commit()
-        teams.insert(1, teams.pop())
+    for season in range(1, seasons+1):
+        if len(teams) % 2:
+            teams.append('Day off')
+        n = len(teams)
+        matchs = []
+        for j in range(1, n):
+            for i in range(int(n/2)):
+                if 'Day off' in (teams[i], teams[n - 1 - i]):
+                    continue
+                matchs.append((teams[i], teams[n - 1 - i]))
+                if season % 2:
+                    idA = teams[i]
+                    idB = teams[n - 1 - i]
+                else:
+                    idA = teams[n - 1 - i]
+                    idB = teams[i]
+                team_A = Match(num_match=int(n/2)*(j-1)+i+1, day_match=j,
+                               team_id=idA)
+                team_B = Match(num_match=int(n/2)*(j-1)+i+1, day_match=j,
+                               team_id=idB)
+                session.add(team_A)
+                session.add(team_B)
+                session.commit()
+            teams.insert(1, teams.pop())
 
 
 def goal_scoring(goal_probability: float) -> int:

@@ -18,6 +18,7 @@ class Match(Base):
     team = relationship('Team', foreign_keys=[team_id],
                         back_populates='team')
     team_score = Column(Integer)
+    season = Column(Integer)
 
 
 class Team(Base):
