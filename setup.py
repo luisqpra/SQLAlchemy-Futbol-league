@@ -1,4 +1,4 @@
-from config import database_url
+from config import database_url, season
 from utils import (insert_teams_with_random_stats,
                    get_team_ids, create_season)
 from sqlalchemy import create_engine, inspect
@@ -32,21 +32,19 @@ harry_potter_teams = [
     "Wizarding Warriors", "Spellcast Strikers", "Enchanted Defenders"
 ]
 
-season = 2
+if __name__ == '__main__':
+    # Verifica si las tablas de Match y Team están en la lista de tablas
+    if 'teams' in tabla_names and session.query(Team).count() == 0:
+        insert_teams_with_random_stats(harry_potter_teams, session=session)
+        print("Los equipos se han sido creados.")
+    else:
+        print("Los equipos ya han sido creados.")
 
-
-# Verifica si las tablas de Match y Team están en la lista de tablas
-if 'teams' in tabla_names and session.query(Team).count() == 0:
-    insert_teams_with_random_stats(harry_potter_teams, session=session)
-    print("Los equipos se han sido creados.")
-else:
-    print("Los equipos ya han sido creados.")
-
-if 'matches' in tabla_names and session.query(Match).count() == 0:
-    # Crear el calendario Fixture
-    list_IDteams = get_team_ids(session)
-    create_season(teams=list_IDteams, session=session, seasons=season)
-    session.close()
-    print("Los partidos se han sido creados.")
-else:
-    print("Los partidos ya han sido creados.")
+    if 'matches' in tabla_names and session.query(Match).count() == 0:
+        # Crear el calendario Fixture
+        list_IDteams = get_team_ids(session)
+        create_season(teams=list_IDteams, session=session, seasons=season)
+        session.close()
+        print("Los partidos se han sido creados.")
+    else:
+        print("Los partidos ya han sido creados.")
