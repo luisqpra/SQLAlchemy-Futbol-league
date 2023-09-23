@@ -10,3 +10,6 @@ base_dir = os.path.dirname(os.path.realpath(__file__))
 # Creamos la URL de la base de datos usando la ruta absoluta y el nombre
 # del archivo
 database_url = f"sqlite:///{os.path.join(base_dir, sqlite_file_name)}"
+
+# Numero de temporadas
+season = 2

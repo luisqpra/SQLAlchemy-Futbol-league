@@ -45,6 +45,7 @@ def create_season(teams: list[int], session: Session, seasons: int) -> None:
             teams.append('Day off')
         n = len(teams)
         matchs = []
+        nseason = (n/2)*(n-1)*(season-1)
         for j in range(1, n):
             for i in range(int(n/2)):
                 if 'Day off' in (teams[i], teams[n - 1 - i]):
@@ -56,10 +57,10 @@ def create_season(teams: list[int], session: Session, seasons: int) -> None:
                 else:
                     idA = teams[n - 1 - i]
                     idB = teams[i]
-                team_A = Match(num_match=int(n/2)*(j-1)+i+1, day_match=j,
-                               season=season, team_id=idA)
-                team_B = Match(num_match=int(n/2)*(j-1)+i+1, day_match=j,
-                               season=season, team_id=idB)
+                team_A = Match(num_match=nseason+int(n/2)*(j-1)+i+1,
+                               day_match=j, season=season, team_id=idA)
+                team_B = Match(num_match=nseason+int(n/2)*(j-1)+i+1,
+                               day_match=j, season=season, team_id=idB)
                 session.add(team_A)
                 session.add(team_B)
                 session.commit()
