@@ -57,9 +57,9 @@ def create_season(teams: list[int], session: Session, seasons: int) -> None:
                     idA = teams[n - 1 - i]
                     idB = teams[i]
                 team_A = Match(num_match=int(n/2)*(j-1)+i+1, day_match=j,
-                               team_id=idA)
+                               season=season, team_id=idA)
                 team_B = Match(num_match=int(n/2)*(j-1)+i+1, day_match=j,
-                               team_id=idB)
+                               season=season, team_id=idB)
                 session.add(team_A)
                 session.add(team_B)
                 session.commit()

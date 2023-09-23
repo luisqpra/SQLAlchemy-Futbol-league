@@ -1,5 +1,6 @@
 from config import database_url
-from utils import insert_teams_with_random_stats, get_team_ids
+from utils import (insert_teams_with_random_stats,
+                   get_team_ids, create_season)
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import sessionmaker
 from models import Base
@@ -41,10 +42,10 @@ if 'teams' in tabla_names and session.query(Team).count() == 0:
 else:
     print("Los equipos ya han sido creados.")
 
-if 'matches' not in tabla_names and session.query(Match).count() == 0:
+if 'matches' in tabla_names and session.query(Match).count() == 0:
     # Crear el calendario Fixture
     list_IDteams = get_team_ids(session)
-    # create_season(teams=list_IDteams, session=session, season=season)
+    create_season(teams=list_IDteams, session=session, seasons=season)
     session.close()
     print("Los partidos se han sido creados.")
 else:
