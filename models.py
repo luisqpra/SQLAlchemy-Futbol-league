@@ -25,8 +25,8 @@ class Team(Base):
     __tablename__ = 'teams'
     id = Column(Integer, primary_key=True)
     name = Column(String, unique=True)
-    defence = Column(Integer)
-    midfielder = Column(Integer)
-    forward = Column(Integer)
+    defence = Column(Float)
+    midfielder = Column(Float)
+    forward = Column(Float)
     # Define relación uno a muchos con partidos donde el equipo es local
     team = relationship('Match', back_populates='team')

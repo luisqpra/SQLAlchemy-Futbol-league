@@ -114,15 +114,15 @@ def bonus_score(turns_A: int,
     if team.forward + bonus_forward < 1:
         bonus_forward = 0
     elif team.forward + bonus_forward > 9:
-        bonus_forward = 9
+        bonus_forward = 0
     if team.midfielder + bonus_midfielder < 1:
         bonus_midfielder = 0
     elif team.midfielder + bonus_midfielder > 9:
-        bonus_midfielder = 9
-    if team.defence + bonus_defence < 1:
         bonus_midfielder = 0
+    if team.defence + bonus_defence < 1:
+        bonus_defence = 0
     elif team.defence + bonus_defence > 9:
-        bonus_midfielder = 9
+        bonus_defence = 0
 
     return [bonus_forward, bonus_midfielder, bonus_defence]
 
@@ -158,14 +158,20 @@ def play_match(session: Session, match: int) -> List[int] | List[List[int]]:
 
     # save score and bonus
     teamM_A.team_score = team_goals_A
+    team_A.defence = round((team_A.defence+bonus_A[2])*10)/10
     teamM_A.bonus_defence = bonus_A[2]
+    team_A.midfielder = round((team_A.midfielder+bonus_A[1])*10)/10
     teamM_A.bonus_midfielder = bonus_A[1]
+    team_A.forward = round((team_A.forward+bonus_A[0])*10)/10
     teamM_A.bonus_forward = bonus_A[0]
 
     teamM_B.team_score = team_goals_B
     teamM_B.bonus_defence = bonus_B[2]
+    team_B.defence = round((team_B.defence+bonus_B[2])*10)/10
     teamM_B.bonus_midfielder = bonus_B[1]
+    team_B.midfielder = round((team_B.midfielder+bonus_B[1])*10)/10
     teamM_B.bonus_forward = bonus_B[0]
+    team_B.forward = round((team_B.forward+bonus_B[0])*10)/10
     session.commit()
 
     return [team_goals_A, bonus_A, team_goals_B, bonus_B]

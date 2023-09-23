@@ -13,6 +13,11 @@ session = Session()
 
 def main(myTeam):
     num_match = int(session.query(Match).count()/2)
+    print(F'***---STACTS {myTeam.name} --***')
+    print(f'forward - {myTeam.forward}')
+    print(f'midfielder - {myTeam.midfielder}')
+    print(f'defence - {myTeam.defence}')
+    print('\n')
     for i in range(1, 1+num_match):
         teamM_A, teamM_B = session.query(Match).filter_by(num_match=i).all()
         teamA = session.query(Team).filter_by(id=teamM_A.team_id).first()
@@ -20,15 +25,30 @@ def main(myTeam):
         match_result = play_match(session=session, match=i)
         team_goals_A, bonus_A, team_goals_B, bonus_B = match_result
         if myTeam.id == teamM_A.team_id or myTeam.id == teamM_B.team_id:
-            print(f'{teamA.name}({team_goals_A}) vs {teamB.name}({team_goals_B})\
-    -> match {teamM_B.num_match}')
+            print(F'***---MATCH {teamM_B.num_match} --***')
+            print(f'{teamA.name}({team_goals_A}) vs\
+ {teamB.name}({team_goals_B})')
+            print('\n')
             print(f'Bonus {teamA.name}: forward ({bonus_A[0]}) \
 midfielder ({bonus_A[1]}) defence ({bonus_A[2]})')
             print(f'Bonus {teamB.name}: forward ({bonus_B[0]}) \
 midfielder ({bonus_B[1]}) defence ({bonus_B[2]})')
+            print('\n')
+            print(f'stats ({teamA.name}):')
+            print(f'forward - {teamA.forward}')
+            print(f'midfielder - {teamA.midfielder}')
+            print(f'defence - {teamA.defence}')
+            print('\n')
+            print(f'stats ({teamB.name}):')
+            print(f'forward - {teamB.forward}')
+            print(f'midfielder - {teamB.midfielder}')
+            print(f'defence - {teamB.defence}')
+            print('\n')
             print('Presione cualquier tecla para \
 continual al siguiente partido')
             getch.getch()
+            print('*-------------------------------------------------*')
+            print('\n')
     session.close()
 
 
@@ -44,6 +64,8 @@ if __name__ == '__main__':
             break
         except ValueError:
             print('Opcion no disponible vuelve a elegir')
+    print('\n')
     myTeam = session.query(Team).filter_by(id=equipo_id).first()
     print(f'Tu equipo es "{myTeam.name}" -> ({myTeam.id})')
+    print('\n')
     main(myTeam)
