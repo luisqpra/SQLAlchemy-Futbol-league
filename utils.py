@@ -1,6 +1,6 @@
 import random
 from models import Team, Match
-from typing import List
+from typing import List, Optional
 from sqlalchemy.orm.session import Session
 from itertools import combinations
 
@@ -127,7 +127,11 @@ def bonus_score(turns_A: int,
     return [bonus_forward, bonus_midfielder, bonus_defence]
 
 
-def play_match(session: Session, match: int) -> List[int] | List[List[int]]:
+def play_match(session: Session,
+               match: int,
+               teamID: int,
+               addstrategy: Optional[List] = None
+               ) -> List[int] | List[List[int]]:
     team_goals_A = 0
     team_goals_B = 0
 
@@ -137,6 +141,11 @@ def play_match(session: Session, match: int) -> List[int] | List[List[int]]:
     team_B = session.query(Team).filter_by(id=teamM_B.team_id).first()
 
     TURNS = 12
+
+    if teamID == 1:
+        addStats(session, team_A, addstrategy)
+    elif teamID == 2:
+        addStats(session, team_B, addstrategy)
 
     turns_A = round(
         TURNS*team_A.midfielder/(team_A.midfielder+team_B.midfielder)
@@ -156,7 +165,50 @@ def play_match(session: Session, match: int) -> List[int] | List[List[int]]:
     bonus_A = bonus_score(turns_A, turns_B, team_goals_A, team_goals_B, team_A)
     bonus_B = bonus_score(turns_B, turns_A, team_goals_B, team_goals_A, team_B)
 
+    if teamID == 1:
+        lessenStats(session, team_A, addstrategy)
+    elif teamID == 2:
+        lessenStats(session, team_B, addstrategy)
+
     # save score and bonus
+    saveScoreBonus(session,
+                   teamM_A, teamM_B,
+                   team_A,  team_B,
+                   bonus_A, bonus_B,
+                   team_goals_A, team_goals_B)
+
+    return [team_goals_A, bonus_A, team_goals_B, bonus_B]
+
+
+def addStats(session: Session,
+             myTeam: Team,
+             addstrategy: List[float]) -> None:
+    myTeam.forward = round((myTeam.forward+addstrategy[0])*10)/10
+    myTeam.midfielder = round((myTeam.midfielder+addstrategy[1])*10)/10
+    myTeam.defence = round((myTeam.defence+addstrategy[2])*10)/10
+    session.commit()
+
+
+def lessenStats(session: Session,
+                myTeam: Team,
+                addstrategy: List[float]) -> None:
+    # remove the strategy
+    myTeam.forward = round((myTeam.forward-addstrategy[0])*10)/10
+    myTeam.midfielder = round((myTeam.midfielder-addstrategy[1])*10)/10
+    myTeam.defence = round((myTeam.defence-addstrategy[2])*10)/10
+    session.commit()
+
+
+def saveScoreBonus(session: Session,
+                   teamM_A: Match,
+                   teamM_B: Match,
+                   team_A: Team,
+                   team_B: Team,
+                   bonus_A: List[float],
+                   bonus_B: List[float],
+                   team_goals_A: int,
+                   team_goals_B: int
+                   ) -> None:
     teamM_A.team_score = team_goals_A
     team_A.defence = round((team_A.defence+bonus_A[2])*10)/10
     teamM_A.bonus_defence = bonus_A[2]
@@ -173,8 +225,6 @@ def play_match(session: Session, match: int) -> List[int] | List[List[int]]:
     teamM_B.bonus_forward = bonus_B[0]
     team_B.forward = round((team_B.forward+bonus_B[0])*10)/10
     session.commit()
-
-    return [team_goals_A, bonus_A, team_goals_B, bonus_B]
 
 
 if __name__ == '__main__':
