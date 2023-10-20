@@ -111,17 +111,17 @@ def bonus_score(turns_A: int,
     elif goal_score_B/turns_B <= 0.3:
         bonus_defence = 0.1
 
-    if team.forward + bonus_forward < 1:
+    if team.forward + bonus_forward <= 1:
         bonus_forward = 0
-    elif team.forward + bonus_forward > 9:
+    elif team.forward + bonus_forward >= 9:
         bonus_forward = 0
-    if team.midfielder + bonus_midfielder < 1:
+    if team.midfielder + bonus_midfielder <= 1:
         bonus_midfielder = 0
-    elif team.midfielder + bonus_midfielder > 9:
+    elif team.midfielder + bonus_midfielder >= 9:
         bonus_midfielder = 0
-    if team.defence + bonus_defence < 1:
+    if team.defence + bonus_defence <= 1:
         bonus_defence = 0
-    elif team.defence + bonus_defence > 9:
+    elif team.defence + bonus_defence >= 9:
         bonus_defence = 0
 
     return [bonus_forward, bonus_midfielder, bonus_defence]
